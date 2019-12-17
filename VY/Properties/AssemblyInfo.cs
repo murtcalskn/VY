@@ -1,55 +1,90 @@
-﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Windows;
-
-// General Information about an assembly is controlled through the following
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("VY")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("VY")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
-
-//In order to begin building localizable applications, set
-//<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file
-//inside a <PropertyGroup>.  For example, if you are using US english
-//in your source files, set the <UICulture> to en-US.  Then uncomment
-//the NeutralResourceLanguage attribute below.  Update the "en-US" in
-//the line below to match the UICulture setting in the project file.
-
-//[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
+﻿
+#include <bits/stdc++.h> 
+using namespace std;
 
 
-[assembly: ThemeInfo(
-    ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
-                                     //(used if a resource is not found in the page,
-                                     // or application resource dictionaries)
-    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
-                                              //(used if a resource is not found in the page,
-                                              // app, or any theme specific resource dictionaries)
-)]
+void findNumbers(vector<int>& ar, int sum,
+    vector<vector<int>>& res,
+    vector<int>& r, int i)
+{
+    //Eğer Mevcut toplam negatif olursa
+    if (sum < 0)
+        return;
 
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+    if (sum == 0)
+    {
+        res.push_back(r);
+        return;
+    }
+
+    //toplam değerinden listenin elamanlarını çıkar 
+    //örnek olarak 8-2-2-2-2=0
+    while (i < ar.size() && sum - ar[i] >= 0)
+    {
+
+        // Dizideki her eleman
+        // toplamına katkıda bulunabilecek  
+        r.push_back(ar[i]); // elamanları listeye ekle
+
+        // recursive:özyinelemeli mantık fonksiyonun içinde koşuldan sonra tekrar fonksiyonu çağır.
+        findNumbers(ar, sum - ar[i], res, r, i);
+        i++;
+
+        //listeden elamanları çıkar
+        r.pop_back();
+    }
+}
+
+
+// verilmiş olan  toplam değerine tüm  liste  kombinasyonlarını döndüren veri yapısı
+// 
+vector<vector<int>> combinationSum(vector<int>& ar,
+    int sum)
+{
+    // listeyi sırala
+    sort(ar.begin(), ar.end());
+
+    // aynı elamanları indexten sil 
+    ar.erase(unique(ar.begin(), ar.end()), ar.end());
+
+    vector<int> r;
+    vector<vector<int>> res;
+    findNumbers(ar, sum, res, r, 0);
+
+    return res;
+}
+
+// Driver code 
+int main()
+{
+    vector<int> ar;
+    ar.push_back(2);
+    ar.push_back(4);
+    ar.push_back(6);
+    ar.push_back(8);
+    int n = ar.size();
+
+    int sum = 8; // verilen toplam değeri
+    vector<vector<int>> res = combinationSum(ar, sum);
+
+    // liste boş ise
+    if (res.size() == 0)
+    {
+        cout << "Emptyn";
+        return 0;
+    }
+
+    // Sonuçta saklanan tüm kombinasyonları ekrana yazdır
+    for (int i = 0; i < res.size(); i++)
+    {
+        if (res[i].size() > 0)
+        {
+            cout << " ( ";
+            for (int j = 0; j < res[i].size(); j++)
+                cout << res[i][j] << " ";
+            cout << ")";
+        }
+    }
+}
+}
